@@ -125,4 +125,6 @@ doxygen main.c
  cd html/
 firefox index.html
 
-
+6. 预习阅读：
+邵国际: C 语言对象化设计实例 —— 命令解析器
+https://mp.weixin.qq.com/s/cuy0PEVRR4f4h_RCiQeTdQ
