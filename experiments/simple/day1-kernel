@@ -102,3 +102,5 @@ shell2:
 cd ~/develop/linux
 arm-linux-gnueabihf-gdb vmlinux
 # target remote :1234
+b start_kernel
+
