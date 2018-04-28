@@ -24,8 +24,8 @@ firefox perf-kernel.svg
 cd proc
 make
 cd ..
-insmod proc/proc.ko
-./function.sh cat /proc/test_dir/test_rw 
+sudo insmod proc/proc.ko
+sudo ./function.sh cat /proc/test_dir/test_rw 
 cat /sys/kernel/debug/tracing/trace
 
 8. run lttv-gui and read lttng result: training/debug/lttng-traced-data/2.6.38.....
