@@ -3,10 +3,12 @@ using namespace std;
 
 double division(int a, int b)
 {
+#if 0
    if( b == 0 )
    {
       throw "Division by zero condition!";
    }
+  #endif
    return (a/b);
 }
 
