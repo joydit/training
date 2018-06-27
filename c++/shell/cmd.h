@@ -10,7 +10,7 @@ public:
 	{
 		this->m_strCmdName = cmdName;
 	}
-	string GetName()
+	string GetName() const
 	{
 		return m_strCmdName;
 	}
