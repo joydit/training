@@ -1,0 +1,33 @@
+1. process life period
+training/process/life_period.c
+
+2. exec + pipe
+training/process/shell_pipe.c
+
+3. signal
+training/process/signal.c
+
+4. signal mask
+training/thread/signal_non_reenteriable.c
+training/thread/signal_non_reenteriable_fixed.c
+
+5. sharemem
+training/process/sharemem_w.c
+training/process/sharemem_r.c
+
+6. ipcs to figure out the status of shared memory and sem
+
+7. lsof /dev/shm/xxx and find the related process for POSIX shared memory
+training/process/posix-ipc
+~/develop/training/process/posix-ipc(shm,sem)
+
+8. threaded signal
+training/thread/signalsync.c
+
+9. use gdb to dump mutex owner
+training/thread/deadlock
+
+10. run ~/develop/training/preempt-rt/pi.c with "sudo"
+
+11. ~/develop/training/thread/stack_overflow.c 
+use gdb to figure out the code line making stack overflow
