@@ -18,14 +18,26 @@ void err_abort(int status, char *p)
 	exit(status);
 }
 
-/*
- * Thread start routine that reports it ran, and then exits.
- */
-void *thread_routine(void *arg)
+static void *access_overflow(void)
 {
-	char p[15000];
-	p[14000] = 'a';
-	printf("The thread is here\n");
+	char q[5000];
+	q[4999] = 'a';
+	q[3999] = 'a';
+	q[2999] = 'a';
+	q[1999] = 'a';
+	q[999] = 'a';
+	q[0] = 'a';
+	printf("The thread is here2\n");
+}
+
+static void *thread_routine(void *arg)
+{
+	char p[5000];
+	p[4999] = 'a';
+	p[0] = 'a';
+	printf("The thread is here1\n");
+
+	access_overflow();
 	return NULL;
 }
 
