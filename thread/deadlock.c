@@ -31,7 +31,7 @@ void *child2(void *arg)
 
 int main(void)
 {
-	int tid1,tid2;
+	pthread_t tid1,tid2;
 	pthread_mutex_init(&mutex_1,NULL);
 	pthread_mutex_init(&mutex_2,NULL);
 	pthread_create(&tid1,NULL,child1,NULL);
