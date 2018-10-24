@@ -14,6 +14,7 @@ int main(void)
 	char buf[MAXLINE];
 	char str[INET_ADDRSTRLEN];
 	int i, n;
+	int ret;
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -22,7 +23,11 @@ int main(void)
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(SERV_PORT);
 
-	bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+	ret = bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+	if (ret==-1) {
+		perror("Error: ");
+		exit(-1);
+	}
 
 	listen(listenfd, 20);
 
