@@ -1,0 +1,83 @@
+实验前,关闭swap, 运行swapoff -a，另外允许overcommit
+$ sudo swapoff -a
+$ sudo sh -c 'echo 1 > /proc/sys/vm/overcommit_memory'
+
+
+1. 做I/O动作，观察page cache变化
+drop cache at first:
+root@baohua-VirtualBox:/proc/sys/vm# echo 3 > drop_caches
+
+#free
+#cat /dev/sda1 > /dev/null
+#free
+
+compare the output of the two free
+
+2. 观察一个进程在运行中代码段等的swapping out
+
+launch firefox
+cat /proc/firefox-pid/smaps > 1
+run: training/debug/mm/munch.c
+cat /proc/firefox-pid/smaps > 2
+compare 1 and 2 by meld
+
+3. 理解page cache对程序速度影响
+~/develop/training/OS/memory-courses/day4/hello.py
+
+$ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
+$ time python hello.py 
+Hello World! Love, Python
+
+real	0m0.142s
+user	0m0.000s
+sys	0m0.020s
+
+$ time python hello.py
+   ... real	0m0.018s ...
+
+两次时间差很大！
+
+4. 理解mmap
+
+~/develop/training/OS/memory-courses/day4/mmap.c
+
+$ gcc mmap.c
+$ ./a.out 
+print "Hello World! Love, Python"
+
+5. 理解内存泄漏
+~/develop/training/OS/memory-courses/day3/leak-example.c
+用smem观察它为什么有内存泄漏，内存/时间线。
+
+6. cgroup/memory
+把oom.c用cgexec放到新的group执行
+~/develop/training/OS/memory-courses/day2/oom.c
+
+
+7. epoll.c
+~/develop/training/OS/io-courses/io-models/epoll.c
+
+运行前需要加载globalfifo
+~/develop/training/kernel/drivers/globalfifo/ch12
+make
+sudo insmod globalfifo.ko
+sudo insmod globalfifo-dev.ko
+chmod 666 /dev/globalfifo 
+
+8. libevent
+~/develop/training/OS/io-courses/io-models/event-exam.c
+gcc event-exam.c -lev
+https://mp.weixin.qq.com/s/Xp4-r-a2iWpDx_yntGIGOQ
+
+9. CFQ & ionice
+$ sudo sh -c 'echo cfq > scheduler'
+$ sudo ionice -c 2 -n 0 cat /dev/sda > /dev/null &
+$ sudo ionice -c 2 -n 7 cat /dev/sda > /dev/null &
+$ sudo iotop
+
+
+ 
+
+
+
+

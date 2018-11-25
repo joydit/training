@@ -1,0 +1,141 @@
+1. strace/ltrace
+-T可以看到时间 
+
+2. gdb:
+code path: 
+~/develop/training/debug/gdb
+(1)gdb attach pid
+(2)gdb tui
+(3)gdb call functions
+(4)gdb debug multithreads:
+	training/thread/thread_life.c(if 0/1)
+(5)ddd
+(6)strip, objdump and gdb
+
+3. coredump:
+training/debug/core-dump
+
+4. 
+draw a diagram for binaries dependency;
+(1) cd ~/develop/linux
+(2) sudo mount -o loop,offset=$((2048*512)) extra/vexpress.img extra/img
+(3) cd extra/img
+(4) generate diagram: 
+baohua@baohua-VirtualBox:~/develop/linux/extra/img$ sudo ~/develop/training/toolchain/binso_dep.sh -o /tmp/1.png -r . usr/sbin/flash_erase
+Analyzing dependencies of usr/sbin/flash_erase...
+
+Parsing file:              usr/sbin/flash_erase
+Parsing file:              libgcc_s.so.1
+Parsing file:              libc.so.6
+Parsing file:              ld-linux.so.3
+Creating output as /tmp/1.png...
+
+figure out symbols dependency between binaries
+baohua@baohua-VirtualBox:~/develop/linux/extra/img$ sudo ~/develop/training/toolchain/nm/symbol-dep.sh -s usr/sbin/flash_erase -d lib/libc.so.6 
+Dependencies between usr/sbin/flash_erase and lib/libc.so.6:
+abort
+calloc
+close
+closedir
+__errno_location
+
+5. LD_PRELOAD
+training/toolchain/ldpreload: following readme
+
+6. 学会使用pcduino3
+串口连接（kermit）；    c, ctrl \ c, exit
+网口连接(板子和PC直连)；  scp,ssh
+观察根文件系统； 
+
+kermit:
+确保 ls -l /dev/ttyUSB0存在
+sudo kermit
+C-Kermit>c
+
+ctrl+\ c进入kermit根据命令模式
+exit
+
+
+7. 学会使用gdbserver
+把电脑上的~/develop/training/debug/gdb下面编译好的a.out拷贝到pcduino3
+用gdbserver(pcduino3)和arm-linux-gnueabihf-gdb（电脑）进行调试
+
+编译arm程序：
+~/develop/training/debug/gdb$ arm-linux-gnueabi-gcc main.c -g -static
+拷贝：
+scp a.out root@192.168.100.100:/
+
+板子执行：
+root@pcduino3:/# gdbserver :1234 ./a.out 
+Process ./a.out created; pid = 332
+Listening on port 1234
+电脑调试：
+baohua@baohua-VirtualBox:~/develop/training/debug/gdb$ arm-linux-gnueabihf-gdb ./a.out 
+(gdb) target remote 192.168.100.100:1234
+Remote debugging using 192.168.100.100:1234
+0x00008b98 in _start ()
+(gdb) b main
+Breakpoint 1 at 0x8dd8
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x00008dd8 in main ()
+
+8. 在板子内核源代码(~/develop/pcduino/kernel)下面的drivers/char添加一个hello.c, 并修改Kconfig和Makefile
+hello.c如下：
+#include <linux/init.h>
+#include <linux/module.h>
+
+static int __init hello_init(void)
+{
+	printk(KERN_INFO "Hello World enter\n");
+	return 0;
+}
+module_init(hello_init);
+
+static void __exit hello_exit(void)
+{
+	printk(KERN_INFO "Hello World exit\n ");
+}
+module_exit(hello_exit);
+
+Kconfig和Makefile修改如下：
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index a043107..d0e4d83 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -4,6 +4,16 @@
+ 
+ menu "Character devices"
+ 
++config HELLO
++	tristate "hello world"
++	default n
++	help
++	  Say Y here if you want to support the /dev/mem device.
++	  The /dev/mem device is used to access areas of physical
++	  memory.
++	  When in doubt, say "Y".
++
++
+ source "drivers/tty/Kconfig"
+ 
+ config DEVMEM
+diff --git a/drivers/char/Makefile b/drivers/char/Makefile
+index d8a7579..d5c084f 100644
+--- a/drivers/char/Makefile
++++ b/drivers/char/Makefile
+@@ -2,6 +2,7 @@
+ # Makefile for the kernel character device drivers.
+ #
+ 
++obj-$(CONFIG_HELLO)	+= hello.o
+ obj-y				+= mem.o random.o
+ obj-$(CONFIG_TTY_PRINTK)	+= ttyprintk.o
+ obj-y				+= misc.o
+
+通过make ARCH=arm menuconfig配置内核。
+编译内核(尝试把hello编译为.ko和直接built-in 2种情况)，重新烧卡。
+并放到板子上去跑。
+
+

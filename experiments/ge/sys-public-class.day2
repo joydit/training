@@ -1,0 +1,46 @@
+1. 实验进程生命周期各步骤
+~/develop/training/process/life_period.c
+体验父进程先死，体验孤儿进程被托孤；
+体验子进程死，但是父进程不wait。
+
+2.cpulimit
+编译cpulimit.c这个死循环程序，gcc cpulimit.c，运行之./a.out，通过pidof a.out命令获得它的pid，然后开一个terminal观察top，发现a.out这个进程的CPU利用率接近100%，之后通过cpulimit控制它的CPU利用率，再看top
+
+~/develop/training/OS/process-courses/day1/cpulimit.c
+
+3. renice, chrt调整进程、线程，分析CPU利用率
+~/develop/training/thread/thread_life.c
+开启其中的死循环
+
+4.通过cgroup分配CPU资源
+
+在/sys/fs/cgroup/cpu创建2个group，然后把放到不同group，
+调整group的cpu.shares,cpu.cfs_quota_us
+~/develop/training/thread/thread_life.c
+
+5. 分析taskset用修改线程affinity
+~/develop/training/thread/thread_life.c运行,设置不同的cpu affinity: 01, 02, 03
+taskset -a -p 02 `pidof a.out`
+
+6. 运行一个引起OOM的程序, oom_adj调整
+$ sudo swapoff -a
+$ sudo sh -c 'echo 1 > /proc/sys/vm/overcommit_memory'
+
+firefox.....
+
+run: training/debug/mm/munch.c
+#dmesg
+
+7. 观察一个进程的代码段rss/pss的变化
+运行1份./a.out
+运行2份./a.out
+运行3份./a.out
+查看/proc/<a.out-pid>/smaps文件第一段
+
+8. 用smem观察内存
+	$ smem
+	$ smem --pie=comand
+	$ smem --bar=command
+
+
+
